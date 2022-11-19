@@ -1,11 +1,25 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import App from './App.vue'
+import useModule from "@/composables/useModule";
+import { useBrowserLocation } from "@vueuse/core"
+import { watch } from "vue";
 
-import './assets/main.css'
+const location = useBrowserLocation()
+console.log('2', location.value.pathname)
 
-const app = createApp(App)
+watch(location.value, () => {
+  console.log('自动', location.value.pathname)
+}, {
+  immediate: true,
+  deep: true
+})
 
-app.use(createPinia())
+useModule({
+  rules: ["*"],
+  load: () => import("@/module/setings")
+})
 
-app.mount('#app')
+useModule({
+  rules: [
+    "/user/center/signin"
+  ],
+  load: () => import("@/module/signin")
+})
